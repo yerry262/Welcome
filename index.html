@@ -181,10 +181,110 @@
       }
       .big-link:hover .icon-github svg { animation: gh-flip 0.9s ease both; }
 
+      /* ---- title: dimmed 3D letters, mouse parallax, glitch slices on top ---- */
+      .glitch-wrapper { perspective: 900px; }
+      .glitch {
+        color: transparent;
+        text-shadow: none;
+        transform-style: preserve-3d;
+        will-change: transform;
+        filter: drop-shadow(0 0 14px rgba(0, 255, 242, 0.22)) drop-shadow(0 12px 30px rgba(0, 90, 160, 0.25));
+      }
+      .glitch > span {
+        display: inline-block;
+        transform-style: preserve-3d;
+      }
+      .glitch .ltr {
+        display: inline-block;
+        transform-style: preserve-3d;
+        text-shadow:
+          0 1px 0 #0e6b66,
+          0 2px 0 #0c5c59,
+          0 3px 0 #0a4d4c,
+          0 4px 0 #083e3f,
+          0 5px 0 #063033,
+          0 6px 0 #042426,
+          0 10px 16px rgba(0, 0, 0, 0.6);
+        animation: ltr-float 4.5s ease-in-out infinite;
+        animation-delay: calc(var(--i) * 0.22s);
+        transition: color 0.3s ease;
+      }
+      .glitch .ltr:nth-child(1) { color: #7fd4cd; }
+      .glitch .ltr:nth-child(2) { color: #61cfca; }
+      .glitch .ltr:nth-child(3) { color: #45c8c8; }
+      .glitch .ltr:nth-child(4) { color: #30b9cd; }
+      .glitch .ltr:nth-child(5) { color: #3aa4d8; }
+      .glitch .ltr:nth-child(6) { color: #4b93e2; }
+      .glitch .ltr:nth-child(7) { color: #5c86e9; }
+      @keyframes ltr-float {
+        0%, 100% { transform: translateZ(0) translateY(0); }
+        50% { transform: translateZ(28px) translateY(-5px); }
+      }
+      .glitch .ltr:hover {
+        color: #d5fffb;
+      }
+
+      /* ---- cards: 3D tilt + cursor glare + layered depth ---- */
+      .big-links { perspective: 1200px; }
+      .big-link {
+        transform-style: preserve-3d;
+        transition: transform 0.12s ease-out, border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+      .big-link:hover {
+        transform: translateY(-8px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      }
+      .big-link::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(0, 255, 242, 0.14), transparent 65%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+      .big-link:hover::after { opacity: 1; }
+      .big-link-icon, .big-link-label { transition: transform 0.25s ease; }
+      .big-link:hover .big-link-icon { transform: translateZ(34px); }
+      .big-link:hover .big-link-label { transform: translateZ(18px); }
+
+      /* keyboard gets the same treatment as hover */
+      .big-link:focus-visible {
+        outline: none;
+        border-color: var(--neon-cyan);
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px #00fff24d, 0 0 30px #00fff21a;
+      }
+
+      /* ---- staggered card entrance ---- */
+      @keyframes card-in {
+        from { opacity: 0; transform: translateY(22px) scale(0.97); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      .big-links { animation: none; }
+      .big-link { animation: card-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+      .big-link:nth-child(1) { animation-delay: 0.5s; }
+      .big-link:nth-child(2) { animation-delay: 0.57s; }
+      .big-link:nth-child(3) { animation-delay: 0.64s; }
+      .big-link:nth-child(4) { animation-delay: 0.71s; }
+      .big-link:nth-child(5) { animation-delay: 0.78s; }
+      .big-link:nth-child(6) { animation-delay: 0.85s; }
+      .big-link:nth-child(7) { animation-delay: 0.92s; }
+      .big-link:nth-child(8) { animation-delay: 0.99s; }
+      .big-link:nth-child(9) { animation-delay: 1.06s; }
+      .big-link:nth-child(10) { animation-delay: 1.13s; }
+      .big-link:nth-child(11) { animation-delay: 1.2s; }
+
       @media (prefers-reduced-motion: reduce) {
         .big-link-icon svg,
-        .big-link-icon svg * {
+        .big-link-icon svg *,
+        .glitch,
+        .glitch .ltr,
+        .big-link {
           animation: none !important;
+        }
+        .big-link:hover {
+          transform: translateY(-8px);
         }
       }
     </style>
@@ -197,7 +297,7 @@
 
     <main class="container">
       <div class="glitch-wrapper">
-        <h1 class="glitch" data-text="WELCOME">WELCOME</h1>
+        <h1 class="glitch" data-text="WELCOME" aria-label="WELCOME"><span aria-hidden="true"><span class="ltr" style="--i:0">W</span><span class="ltr" style="--i:1">E</span><span class="ltr" style="--i:2">L</span><span class="ltr" style="--i:3">C</span><span class="ltr" style="--i:4">O</span><span class="ltr" style="--i:5">M</span><span class="ltr" style="--i:6">E</span></span></h1>
       </div>
 
       <div class="terminal-box">
@@ -375,5 +475,51 @@
       </footer>
     </main>
 
+    <script>
+      (() => {
+        if (!matchMedia('(pointer: fine)').matches) return;
+        const motionOK = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // WELCOME parallax: word tilts toward the cursor with lerp smoothing
+        const title = document.querySelector('.glitch');
+        if (title && motionOK) {
+          let tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
+          const loop = () => {
+            cx += (tx - cx) * 0.07;
+            cy += (ty - cy) * 0.07;
+            title.style.transform = 'rotateY(' + cx.toFixed(2) + 'deg) rotateX(' + cy.toFixed(2) + 'deg)';
+            if (Math.abs(tx - cx) + Math.abs(ty - cy) > 0.01) {
+              raf = requestAnimationFrame(loop);
+            } else {
+              raf = null;
+            }
+          };
+          window.addEventListener('pointermove', (e) => {
+            tx = (e.clientX / innerWidth - 0.5) * 18;
+            ty = (0.5 - e.clientY / innerHeight) * 12;
+            if (!raf) raf = requestAnimationFrame(loop);
+          });
+        }
+
+        const MAX_TILT = 7;
+        document.querySelectorAll('.big-link').forEach((card) => {
+          card.addEventListener('pointermove', (e) => {
+            const r = card.getBoundingClientRect();
+            const px = (e.clientX - r.left) / r.width;
+            const py = (e.clientY - r.top) / r.height;
+            card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+            card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+            if (motionOK) {
+              card.style.setProperty('--ry', ((px - 0.5) * 2 * MAX_TILT).toFixed(2) + 'deg');
+              card.style.setProperty('--rx', ((0.5 - py) * 2 * MAX_TILT).toFixed(2) + 'deg');
+            }
+          });
+          card.addEventListener('pointerleave', () => {
+            card.style.setProperty('--rx', '0deg');
+            card.style.setProperty('--ry', '0deg');
+          });
+        });
+      })();
+    </script>
   </body>
 </html>
