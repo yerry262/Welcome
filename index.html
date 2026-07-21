@@ -163,6 +163,13 @@
       }
       .big-link:hover .bl-drip { animation: bl-drip 0.8s ease-in infinite; }
 
+      /* Mesh Status: node pulses green */
+      @keyframes ms-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.35; }
+      }
+      .big-link:hover .ms-pulse { animation: ms-pulse 1.4s ease-in-out infinite; }
+
       /* About Me: wave hello */
       @keyframes am-wave {
         0%, 100% { transform: rotate(0deg); }
@@ -439,6 +446,20 @@
             </svg>
           </div>
           <div class="big-link-label">Blood Lab Results</div>
+          <div class="big-link-arrow" aria-hidden="true">→</div>
+        </a>
+        <a href="https://yerry262.github.io/MyVPN/" class="big-link">
+          <div class="big-link-icon icon-meshstatus" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="48" height="48">
+              <line x1="6" y1="6" x2="18" y2="6" stroke="#5eead4" stroke-width="1.4"/>
+              <line x1="6" y1="6" x2="12" y2="18" stroke="#5eead4" stroke-width="1.4"/>
+              <line x1="18" y1="6" x2="12" y2="18" stroke="#5eead4" stroke-width="1.4"/>
+              <circle cx="6" cy="6" r="2.4" fill="#5eead4"/>
+              <circle cx="18" cy="6" r="2.4" fill="#5eead4"/>
+              <circle class="ms-pulse" cx="12" cy="18" r="2.6" fill="#39ff88"/>
+            </svg>
+          </div>
+          <div class="big-link-label">Mesh Status</div>
           <div class="big-link-arrow" aria-hidden="true">→</div>
         </a>
         <a href="https://yerry262.github.io/Personal_Website/" class="big-link">
